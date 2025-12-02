@@ -130,5 +130,107 @@ function loadPhotos(id){
   setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
 }
 </script>
+
+
+<!-- টেলিগ্রাম ফ্লোটিং বাবল - ডাইনামিক ডিজাইন -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  .tg-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, #0088cc, #00aaff);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation: pulse 2 4s infinite;
+  }
+
+  .tg-bubble:hover {
+    transform: translateY(-10px) scale(1.12);
+    box-shadow: 0 15px 35px rgba(0, 136, 204, 0.6);
+  }
+
+  /* পালস অ্যানিমেশন */
+  @keyframes pulse2 {
+    0%, 100% { box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4); }
+    50% { box-shadow: 0 8px 35px rgba(0, 136, 204, 0.65); }
+  }
+
+  /* টুলটিপ (চাপ দিলে মেসেজ দেখাবে) */
+  .tg-tooltip {
+    position: absolute;
+    bottom: 80px;
+    right: -20px;
+    background: #1e1e1e;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 25px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  }
+
+  .tg-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 20px;
+    border: 10px solid transparent;
+    border-top-color: #1e1e1e;
+  }
+
+  .tg-bubble:hover .tg-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  /* মোবাইলে ছোট করা */
+  @media (max-width: 768px) {
+    .tg-bubble { width: 56px; height: 56px; font-size: 28px; bottom: 20px; right: 20px; }
+    .tg-tooltip { font-size: 14px; padding: 10px 15px; }
+  }
+</style>
+
+<!-- বাবলটা -->
+<div class="tg-bubble" onclick="openTelegram()">
+  <i class="fa-brands fa-telegram"></i>
+  <div class="tg-tooltip">হাই! কিছু জানার আছে? চ্যাট করি</div>
+</div>
+
+<script>
+function openTelegram() {
+  const username = "towsif_ahamed";  // ← এখানে তোমার টেলিগ্রাম ইউজারনেম দাও (@ ছাড়া)
+  const message = "হাই! আমি তোমার ওয়েবসাইট থেকে এসেছি";
+
+  const text = encodeURIComponent(message);
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    window.location.href = `tg://msg?to=@${username}&text=${text}`;
+  } else {
+    window.open(`https://t.me/${username}?text=${text}`, '_blank');
+  }
+}
+</script>
+
+
+  
 </body>
 </html>
