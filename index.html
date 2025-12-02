@@ -132,7 +132,7 @@ function loadPhotos(id){
 </script>
 
 
-<!-- টেলিগ্রাম চ্যানেল ফ্লোটিং বাবল - আপডেটেড -->
+<!-- টেলিগ্রাম ফ্লোটিং বাবল – আগের সুন্দর ডাইনামিক ডিজাইন -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -149,7 +149,7 @@ function loadPhotos(id){
     align-items: center;
     justify-content: center;
     font-size: 32px;
-    box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+    box-shadow: 0 8px 25px rgba(0,136,204,0.4);
     z-index: 9999;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -158,16 +158,14 @@ function loadPhotos(id){
 
   .tg-bubble:hover {
     transform: translateY(-10px) scale(1.12);
-    box-shadow: 0 15px 35px rgba(0, 136, 204, 0.6);
+    box-shadow: 0 15px 35px rgba(0,136,204,0.6);
   }
 
-  /* পালস অ্যানিমেশন */
   @keyframes pulse2 {
-    0%, 100% { box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4); }
-    50% { box-shadow: 0 8px 35px rgba(0, 136, 204, 0.65); }
+    0%, 100% { box-shadow: 0 8px 25px rgba(0,136,204,0.4); }
+    50% { box-shadow: 0 8px 35px rgba(0,136,204,0.65); }
   }
 
-  /* টুলটিপ */
   .tg-tooltip {
     position: absolute;
     bottom: 80px;
@@ -176,7 +174,6 @@ function loadPhotos(id){
     color: #fff;
     padding: 12px 18px;
     border-radius: 25px;
-    font-family: Arial, sans-serif;
     font-size: 15px;
     white-space: nowrap;
     opacity: 0;
@@ -201,37 +198,23 @@ function loadPhotos(id){
     transform: translateY(0);
   }
 
-  /* মোবাইল অ্যাডজাস্টমেন্ট */
   @media (max-width: 768px) {
     .tg-bubble { width: 56px; height: 56px; font-size: 28px; bottom: 20px; right: 20px; }
-    .tg-tooltip { font-size: 14px; padding: 10px 15px; }
   }
 </style>
 
-<!-- বাবল */
-<div class="tg-bubble" onclick="openTelegramChannel()">
+<!-- বাবলটা -->
+<div class="tg-bubble" onclick="openMyChannel()">
   <i class="fa-brands fa-telegram"></i>
   <div class="tg-tooltip">হাই! PixGuard চ্যানেলে চ্যাট করি</div>
 </div>
 
 <script>
-function openTelegramChannel() {
-  const channel = "PixGuard_BD";  // তোমার চ্যানেল ইউজারনেম (@ ছাড়া)
-  const message = "হাই! আমি তোমার ওয়েবসাইট থেকে PixGuard চ্যানেলে এসেছি। কোনো সাহায্য লাগলে বলো 😊";
-
-  const text = encodeURIComponent(message);
-  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent);
-
-  if (isMobile) {
-    // মোবাইলে ডিরেক্ট অ্যাপ ওপেন + মেসেজ প্রি-ফিল
-    window.location.href = `tg://resolve?domain=${channel}&text=${text}`;
-  } else {
-    // ডেস্কটপে ওয়েব লিংক + মেসেজ
-    window.open(`https://t.me/${channel}?text=${text}`, '_blank');
-  }
+function openMyChannel() {
+  const channelLink = "https://t.me/PixGuard_BD";
+  window.open(channelLink, '_blank');
 }
 </script>
-
 
   
 </body>
