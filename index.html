@@ -4,42 +4,75 @@
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-const m=["লজ্জা করো 🥺","আবার? 😭","চোর! 😤","কাঁদবো এখন 💔","না প্লিজ 🥹","মা দেখবে 😱","ব্লক করবো 😡","আহারে… 😢","যাও যাও 🏃","এক্স দেখবে 😏"];
-let f=true;
+const msgs = ["লজ্জা করো 🥺","আবারো? 😭","পাপ হবে 💙","হাত ব্যাথা করেনা? 🥹","না প্লিজ 🥶"," এরে এবার থাম 😱","ব্লক করবো 😤","আহারে… 💔","যাও যাও 🏃‍♂️","নিজে লেখো 🌟"];
 
-document.oncontextmenu=e=>{
+let first = true;
+
+document.oncontextmenu = e => {
     e.preventDefault();
-    if(f){
-        f=false;
+    
+    if (first) {
+        first = false;
         Swal.fire({
-            title:"আরে না 🥺",
-            text:"কোড চুরি করবা?",
-            confirmButtonText:"সরি",
-            allowOutsideClick:false,
-            imageUrl:"https://i.ibb.co/4pRjh8C/cute-cry.gif",
-            imageWidth:90,
-            background:"#fff0f5",
-            color:"#d63384",
-            confirmButtonColor:"#ff69b4"
+            title: "আরে না না 🥺",
+            text: "কোড চুরি করবা? আমার খুব কষ্ট হবে 💙",
+            icon: "warning",
+            confirmButtonText: "সরি, আর করবো না 🥹",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            imageUrl: "https://i.ibb.co/4pRjh8C/cute-cry.gif",
+            imageWidth: 100,
+            imageHeight: 100,
+            background: "rgba(255, 255, 255, 0.95)",
+            backdrop: "rgba(59, 130, 246, 0.5)",
+            color: "#1e40af",
+            confirmButtonColor: "#3b82f6",
+            customClass: {
+                popup: "border border-blue-200 shadow-2xl",
+                title: "font-bold text-2xl",
+                confirmButton: "hover:scale-105 transition-transform"
+            }
         });
-    }else{
+    } else {
+        const msg = msgs[Math.floor(Math.random() * msgs.length)];
         Swal.fire({
-            toast:true,
-            title:m[Math.random()*m.length|0],
-            position:"top",
-            timer:1800,
-            timerProgressBar:true,
-            background:"#ff69b4",
-            color:"#fff",
-            icon:"error",
-            showConfirmButton:false
+            toast: true,
+            title: msg,
+            position: "top-end",
+            timer: 2200,
+            timerProgressBar: true,
+            showConfirmButton: false,
+            icon: "error",
+            background: "linear-gradient(135deg, #3b82f6, #1e40af)",
+            color: "#fff",
+            customClass: {
+                popup: "animate__animated animate__fadeInRight shadow-lg border-l-4 border-white",
+                title: "font-semibold text-lg"
+            },
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
         });
     }
 };
 
-document.onkeydown=e=>(e.ctrlKey||e.key==="F12")&&e.preventDefault();
-document.body.style.userSelect="none";
+// সব শর্টকাট ব্লক
+document.onkeydown = e => {
+    if (e.ctrlKey || e.key === "F12" || (e.shiftKey && e.ctrlKey)) {
+        e.preventDefault();
+        Swal.fire({toast:true, title:"চিটিং করবা না 🥶", timer:1500, position:"top", background:"#1e40af", color:"#fff"});
+    }
+};
+
+// টেক্সট সিলেক্ট বন্ধ
+document.body.style.userSelect = "none";
 </script>
+
+<!-- অতিরিক্ত সৌন্দর্যের জন্য (অপশনাল) -->
+<style>
+body { background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); min-height: 100vh; }
+</style>
   
   <script>
     (function() {
