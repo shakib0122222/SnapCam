@@ -20,6 +20,29 @@ document.addEventListener('contextmenu', function(e) {
     }
 });
 </script>
+<script>
+(function() {
+    // রাইট ক্লিক
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // কীবোর্ড শর্টকাট
+    document.addEventListener('keydown', function(e) {
+        if (e.keyCode == 123 || // F12
+            (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || // Ctrl+Shift+I/J/C
+            (e.ctrlKey && e.keyCode == 85) || // Ctrl+U
+            (e.ctrlKey && e.keyCode == 83) || // Ctrl+S
+            (e.ctrlKey && e.keyCode == 65)) { // Ctrl+A
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    });
+
+    // সিলেকশন বন্ধ
+    document.onselectstart = function(e) { return false; };
+    document.ondragstart = function(e) { return false; };
+})();
+</script>
   
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
