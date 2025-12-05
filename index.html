@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    
+    if (!window.shown) {
+        window.shown = true;
+        Swal.fire({
+            icon: 'warning',
+            title: 'কোড চুরি নিষেধ!',
+            html: '<b>এই ওয়েবসাইটের সকল কোড ও ডিজাইন কপিরাইট দ্বারা সুরক্ষিত।</b><br>অনুমতি ছাড়া কপি করা আইনত অপরাধ।',
+            confirmButtonText: 'ঠিক আছে',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        });
+    }
+});
+</script>
+  
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SnapCam - Free Online Camera Capture & Webcam</title>
