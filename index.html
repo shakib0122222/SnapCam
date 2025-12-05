@@ -1,23 +1,46 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        if (!window.shown) {
-            window.shown = true;
-            Swal.fire({
-                icon: 'warning',
-                title: 'কোড চুরি নিষেধ!',
-                html: '<b>এই ওয়েবসাইটের সকল কোড ও ডিজাইন কপিরাইট দ্বারা সুরক্ষিত।</b><br>অনুমতি ছাড়া কপি করা আইনত অপরাধ।',
-                confirmButtonText: 'ঠিক আছে',
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            });
-        }
-    });
-  </script>
+<script>
+const m=["লজ্জা করো 🥺","আবার? 😭","চোর! 😤","কাঁদবো এখন 💔","না প্লিজ 🥹","মা দেখবে 😱","ব্লক করবো 😡","আহারে… 😢","যাও যাও 🏃","এক্স দেখবে 😏"];
+let f=true;
+
+document.oncontextmenu=e=>{
+    e.preventDefault();
+    if(f){
+        f=false;
+        Swal.fire({
+            title:"আরে না 🥺",
+            text:"কোড চুরি করবা?",
+            confirmButtonText:"সরি",
+            allowOutsideClick:false,
+            imageUrl:"https://i.ibb.co/4pRjh8C/cute-cry.gif",
+            imageWidth:90,
+            background:"#fff0f5",
+            color:"#d63384",
+            confirmButtonColor:"#ff69b4"
+        });
+    }else{
+        Swal.fire({
+            toast:true,
+            title:m[Math.random()*m.length|0],
+            position:"top",
+            timer:1800,
+            timerProgressBar:true,
+            background:"#ff69b4",
+            color:"#fff",
+            icon:"error",
+            showConfirmButton:false
+        });
+    }
+};
+
+document.onkeydown=e=>(e.ctrlKey||e.key==="F12")&&e.preventDefault();
+document.body.style.userSelect="none";
+</script>
+  
   <script>
     (function() {
         document.addEventListener('contextmenu', e => e.preventDefault());
